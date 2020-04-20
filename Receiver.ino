@@ -107,9 +107,7 @@ void loop() {
 
     // peripheral disconnected, start scanning again
     BLE.scanForUuid("917649A0-D98E-11E5-9EEC-0002A5D5C51B");
-
   }
-
   IMU_signal(); //Read the gyro and accelerometer data.
 
   //Gyro angle calculations (integration)
