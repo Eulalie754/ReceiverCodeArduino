@@ -108,16 +108,17 @@ void loop() {
     // peripheral disconnected, start scanning again
     BLE.scanForUuid("917649A0-D98E-11E5-9EEC-0002A5D5C51B");
 
- }
+  }
 
-    IMU_signal(); //Read the gyro and accelerometer data.
+  IMU_signal(); //Read the gyro and accelerometer data.
 
-   //Gyro angle calculations (integration)
+  //Gyro angle calculations (integration)
   //0,009615= 1 / (104Hz)
   angle_pitch += (float)gyro_pitch*0.009615;                                    //Calculate the traveled pitch angle and add this to the angle_pitch variable.
   angle_roll += (float)gyro_roll*0.009615;                                      //Calculate the traveled roll angle and add this to the angle_roll variable.
   angle_yaw += (float)gyro_yaw*0.009615;                                        //Calculate the traveled yaw angle and add this to the angle_yaw variable.
-  
+
+  /*
   Serial.print("gyro angle");
   Serial.print('\t');
   Serial.print(angle_pitch);
@@ -126,6 +127,7 @@ void loop() {
   Serial.print('\t');
   Serial.print(angle_yaw);
   Serial.print('\t');
+  */
   
   //0,000167835 = 0,009615 * (3.142(PI) / 180degr) The Arduino sin function is in radians and not degrees.
   angle_pitch -= angle_roll*sin((float)gyro_yaw*0.000167835);                  //If the IMU has yawed transfer the roll angle to the pitch angle.
@@ -140,23 +142,27 @@ void loop() {
   if (abs(acc_x)<acc_total_vector) {                                             //Prevent the asin function to produce a NaN.
     angle_roll_acc=asin((float)acc_x/acc_total_vector)*57.296;               //Calculate the roll angle in degrees.
   }
-  
+
+  /*
   Serial.print("acc angle");
   Serial.print('\t');
   Serial.print(angle_pitch_acc);
   Serial.print('\t');
   Serial.print(angle_roll_acc);
   Serial.print('\t');
+   */
    
   angle_pitch = angle_pitch*0.9+angle_pitch_acc*0.1;                   //Correct the drift of the gyro pitch angle with the accelerometer pitch angle.
   angle_roll = angle_roll*0.9+angle_roll_acc*0.1;                      //Correct the drift of the gyro roll angle with the accelerometer roll angle.
 
+  /*
   Serial.print("correct angle");
   Serial.print('\t');
   Serial.print(angle_pitch);
   Serial.print('\t');
   Serial.print(angle_roll);
   Serial.println('\t');
+  */
 
 }
 
@@ -210,12 +216,15 @@ void readReceiver(BLEDevice peripheral) {
     float data[3];
     // read the sensor data
     imuCharacteristic.readValue((byte *) &data, 12);
+    Serial.print(data[0]);
+    Serial.print('\t');
+    Serial.print(data[1]);
+    Serial.print('\t');
+    Serial.println (data[2]);
 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
   //Add the code for generating the output signal to the ESC using the PID calculation 
   ////////////////////////////////////////////////////////////////////////////////////////////////////
-
   }
-
   Serial.println("Peripheral disconnected");
 }
